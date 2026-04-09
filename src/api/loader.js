@@ -1,4 +1,3 @@
-import Worker from './game.worker.js';
 import init_sound from './sound';
 import load_spawn from './load_spawn';
 import webrtc_open from './webrtc';
@@ -65,7 +64,7 @@ async function do_load_game(api, audio, mpq, spawn) {
   }
   return await new Promise((resolve, reject) => {
     try {
-      const worker = new Worker();
+      const worker = new Worker(new URL('./game.worker.js', import.meta.url), { type: 'module' });
 
       let packetQueue = [];
       const webrtc = webrtc_open(data => {

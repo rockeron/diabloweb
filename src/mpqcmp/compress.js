@@ -1,6 +1,5 @@
-import Worker from './mpqcmp.worker.js';
-import MpqBinary from './MpqCmp.wasm';
-import ListFile from './ListFile.txt';
+import MpqBinaryUrl from './MpqCmp.wasm?url';
+import ListFileUrl from './ListFile.txt?url';
 import axios from 'axios';
 
 import { decrypt, encrypt, hash, path_name } from '../api/savefile';
@@ -36,7 +35,7 @@ async function loadFile(url, progress, responseType='arraybuffer') {
 function runWorker(data, transfer, progress) {
   return new Promise((resolve, reject) => {
     try {
-      const worker = new Worker();
+      const worker = new Worker(new URL('./mpqcmp.worker.js', import.meta.url), { type: 'module' });
       worker.addEventListener("message", ({data}) => {
         switch (data.action) {
         case "result":
@@ -74,11 +73,11 @@ export default async function compress(mpq, progress) {
   files.push(fHeader);
 
   const fBinary = {loaded: 0, weight: 5, total: MpqSize};
-  fBinary.ready = loadFile(MpqBinary, loader(fBinary));
+  fBinary.ready = loadFile(MpqBinaryUrl, loader(fBinary));
   files.push(fBinary);
 
   const fList = {loaded: 0, weight: 5, total: ListSize};
-  fList.ready = loadFile(ListFile, loader(fList), 'text');
+  fList.ready = loadFile(ListFileUrl, loader(fList), 'text');
   files.push(fList);
 
   const header = new Uint32Array(await fHeader.ready);

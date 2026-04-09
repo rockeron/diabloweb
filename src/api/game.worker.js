@@ -1,6 +1,6 @@
-import DiabloBinary from './Diablo.wasm';
+import DiabloBinaryUrl from './Diablo.wasm?url';
 import DiabloModule from './Diablo.jscc';
-import SpawnBinary from './DiabloSpawn.wasm';
+import SpawnBinaryUrl from './DiabloSpawn.wasm?url';
 import SpawnModule from './DiabloSpawn.jscc';
 import axios from 'axios';
 
@@ -351,7 +351,7 @@ const readFile = (file, progress) => new Promise((resolve, reject) => {
 
 async function initWasm(spawn, progress) {
   const binary = await axios.request({
-    url: spawn ? SpawnBinary : DiabloBinary,
+    url: spawn ? SpawnBinaryUrl : DiabloBinaryUrl,
     responseType: 'arraybuffer',
     onDownloadProgress: progress,
   });

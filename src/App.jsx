@@ -1,9 +1,6 @@
 import React from 'react';
 import './App.scss';
 import classNames from 'classnames';
-import ReactGA from 'react-ga';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faTimes, faDownload } from '@fortawesome/free-solid-svg-icons';
 import getPlayerName from './api/savefile';
 
 import { mapStackTrace } from 'sourcemapped-stacktrace';
@@ -17,10 +14,6 @@ import Peer from 'peerjs';
 
 window.Peer = Peer;
 
-if (process.env.NODE_ENV === 'production') {
-  ReactGA.initialize('UA-43123589-6');
-  ReactGA.pageview('/');
-}
 
 function reportLink(e, retail) {
   const message = (e.message || "Unknown error") + (e.stack ? "\n" + e.stack : "");
@@ -321,13 +314,6 @@ class App extends React.Component {
     this.setState({dropping: 0});
 
     const retail = !!(file && !file.name.match(/^spawn\.mpq$/i));
-    if (process.env.NODE_ENV === 'production') {
-      ReactGA.event({
-        category: 'Game',
-        action: retail ? 'Start Retail' : 'Start Shareware',
-      });
-    }
-
     this.setState({loading: true, retail});
 
     load_game(this, file, !retail).then(game => {
@@ -688,8 +674,8 @@ class App extends React.Component {
           <ul className="saveList">
             {Object.entries(save_names).map(([name, info]) => <li key={name}>
               {name}{info ? <span className="info">{info.name} (lv. {info.level} {plrClass[info.cls]})</span> : ""}
-              <FontAwesomeIcon className="btnDownload" icon={faDownload} onClick={() => this.downloadSave(name)}/>
-              <FontAwesomeIcon className="btnRemove" icon={faTimes} onClick={() => this.removeSave(name)}/>
+              <span className="btnDownload" onClick={() => this.downloadSave(name)} role="button" tabIndex={0}>&#x2B07;</span>
+              <span className="btnRemove" onClick={() => this.removeSave(name)} role="button" tabIndex={0}>&#x2716;</span>
             </li>)}
           </ul>
           <form>
