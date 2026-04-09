@@ -6,35 +6,35 @@ import { resolve, dirname, join } from 'node:path'
 import { mkdirSync, writeFileSync } from 'node:fs'
 import { fileURLToPath } from 'node:url'
 
-// Resolve paths relative to the monorepo root
+// Resolve paths relative to the project root (diabloweb/)
 const SCRIPT_DIR = dirname(fileURLToPath(import.meta.url))
-const MONOREPO_ROOT = resolve(SCRIPT_DIR, '..', '..')
-const SERVER_PKG = resolve(MONOREPO_ROOT, 'packages', 'server', 'src')
+const PROJECT_ROOT = resolve(SCRIPT_DIR, '..')
+const SRC_DIR = resolve(PROJECT_ROOT, 'src')
 
-// Dynamic imports from the server package (avoids import path issues with tsx)
+// Dynamic imports from local src/ modules
 async function loadServerModules() {
   const { MpqReader } = await import(
-    resolve(SERVER_PKG, 'mpq', 'mpq-reader.ts')
+    resolve(SRC_DIR, 'mpq', 'mpq-reader.ts')
   )
   const { decodeCel } = await import(
-    resolve(SERVER_PKG, 'decoders', 'cel-decoder.ts')
+    resolve(SRC_DIR, 'decoders', 'cel-decoder.ts')
   )
   const { decodeCl2 } = await import(
-    resolve(SERVER_PKG, 'decoders', 'cl2-decoder.ts')
+    resolve(SRC_DIR, 'decoders', 'cl2-decoder.ts')
   )
   const { loadPalette } = await import(
-    resolve(SERVER_PKG, 'decoders', 'palette-loader.ts')
+    resolve(SRC_DIR, 'decoders', 'palette-loader.ts')
   )
   const { renderToPng } = await import(
-    resolve(SERVER_PKG, 'decoders', 'image-renderer.ts')
+    resolve(SRC_DIR, 'decoders', 'image-renderer.ts')
   )
   return { MpqReader, decodeCel, decodeCl2, loadPalette, renderToPng }
 }
 
 // --- Configuration ---
 
-const MPQ_PATH = resolve(process.argv[2] ?? resolve(MONOREPO_ROOT, 'DIABDAT.MPQ'))
-const OUTPUT_DIR = resolve(process.argv[3] ?? resolve(SCRIPT_DIR, '..', 'extracted'))
+const MPQ_PATH = resolve(process.argv[2] ?? resolve(PROJECT_ROOT, 'DIABDAT.MPQ'))
+const OUTPUT_DIR = resolve(process.argv[3] ?? resolve(PROJECT_ROOT, 'extracted'))
 
 // Known sprite widths by path prefix (Diablo 1 convention)
 const SPRITE_WIDTHS: ReadonlyArray<readonly [string, number]> = [
