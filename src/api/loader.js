@@ -38,6 +38,8 @@ function onRender(api, ctx, upscaler, {bitmap, images, text, clip, belt}) {
   if (upscaler) {
     const hdCanvas = upscaler.upscale(api._sourceCanvas);
     ctx.drawImage(hdCanvas, 0, 0);
+  } else {
+    ctx.drawImage(api._sourceCanvas, 0, 0);
   }
 
   api.updateBelt(belt);
