@@ -90,7 +90,7 @@ const Link = ({children, ...props}) => <a target="_blank" rel="noopener noreferr
 
 class App extends React.Component {
   files = new Map();
-  state = {started: false, loading: false, dropping: 0, has_spawn: false};
+  state = {started: false, loading: false, dropping: 0, has_spawn: false, hdMode: true};
   cursorPos = {x: 0, y: 0};
 
   touchControls = false;
@@ -264,9 +264,10 @@ class App extends React.Component {
       return;
     }
     this.touchBelt[idx] = slot;
+    const scale = this.hdScale || 1;
     if (slot >= 0) {
       this.touchButtons[idx].style.display = "block";
-      this.touchCtx[idx].drawImage(this.canvas, 205 + 29 * slot, 357, 28, 28, 0, 0, 28, 28);
+      this.touchCtx[idx].drawImage(this.canvas, (205 + 29 * slot) * scale, 357 * scale, 28 * scale, 28 * scale, 0, 0, 28, 28);
     } else {
       this.touchButtons[idx].style.display = "none";
     }
@@ -315,6 +316,8 @@ class App extends React.Component {
 
     const retail = !!(file && !file.name.match(/^spawn\.mpq$/i));
     this.setState({loading: true, retail});
+
+    this.hdScale = this.state.hdMode ? 4 : 1;
 
     load_game(this, file, !retail).then(game => {
       this.game = game;
@@ -728,6 +731,10 @@ class App extends React.Component {
             <label htmlFor="loadFile" className="startButton">Select MPQ</label>
             <input accept=".mpq" type="file" id="loadFile" style={{display: "none"}} onChange={this.parseFile}/>
           </form>
+          <label style={{color: '#ccc', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px', marginTop: '8px'}}>
+            <input type="checkbox" checked={this.state.hdMode} onChange={e => this.setState({hdMode: e.target.checked})} />
+            HD Mode (4x upscale)
+          </label>
           <div className="startButton" onClick={() => this.start()}>Play Shareware</div>
           {!!save_names && <div className="startButton" onClick={this.showSaves}>Manage Saves</div>}
         </div>
