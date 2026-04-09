@@ -31,6 +31,6 @@ export default defineConfig({
     'process.env.VERSION': JSON.stringify('2.0.0'),
   },
   server: {
-    port: parseInt(process.env.PORT || '3000')
+    port: parseInt(process.env.PORT || '3001')
   }
 })
